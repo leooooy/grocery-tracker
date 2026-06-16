@@ -157,7 +157,8 @@ function renderRecords() {
   const tbody = document.querySelector("#recordsTable tbody");
   const q = recordsFilter.trim();
   const filtered = q
-    ? DATA.records.filter(r => r.item.includes(q) || (r.note || "").includes(q))
+    ? DATA.records.filter(r => r.item.includes(q) ||
+        (r.merchant || "").includes(q) || (r.note || "").includes(q))
     : DATA.records;
   const sorted = [...filtered].sort((a, b) => b.date.localeCompare(a.date));
   document.getElementById("recordCount").textContent =
@@ -170,6 +171,7 @@ function renderRecords() {
       <td class="right">${r.quantity}</td>
       <td>${escapeHtml(r.unit)}</td>
       <td>${r.on_sale ? "✓" : ""}</td>
+      <td>${escapeHtml(r.merchant || "")}</td>
       <td>${escapeHtml(r.note || "")}</td>
     </tr>
   `).join("");

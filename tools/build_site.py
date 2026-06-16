@@ -25,6 +25,7 @@ def _parse_row(row: dict) -> dict | None:
         quantity = float(row["quantity"])
         unit = row["unit"].strip()
         on_sale = row["on_sale"].strip().lower() == "true"
+        merchant = (row.get("merchant", "") or "").strip()
         note = row.get("note", "") or ""
         if not item or not unit or unit_price <= 0 or quantity <= 0:
             return None
@@ -35,6 +36,7 @@ def _parse_row(row: dict) -> dict | None:
             "quantity": quantity,
             "unit": unit,
             "on_sale": on_sale,
+            "merchant": merchant,
             "note": note,
             "total": round(unit_price * quantity, 2),
         }

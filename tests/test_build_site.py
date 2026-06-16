@@ -5,15 +5,20 @@ from tools.build_site import build_data
 
 SAMPLE_ROWS = [
     {"date": "2026-04-10", "item": "白菜", "unit_price": "3.00",
-     "quantity": "2", "unit": "斤", "on_sale": "false", "note": ""},
+     "quantity": "2", "unit": "斤", "on_sale": "false",
+     "merchant": "永辉", "note": ""},
     {"date": "2026-04-15", "item": "白菜", "unit_price": "3.50",
-     "quantity": "1", "unit": "斤", "on_sale": "true", "note": "促销"},
+     "quantity": "1", "unit": "斤", "on_sale": "true",
+     "merchant": "钱大妈", "note": "促销"},
     {"date": "2026-05-01", "item": "白菜", "unit_price": "4.00",
-     "quantity": "2", "unit": "斤", "on_sale": "false", "note": ""},
+     "quantity": "2", "unit": "斤", "on_sale": "false",
+     "merchant": "", "note": ""},
     {"date": "2026-05-20", "item": "鸡蛋", "unit_price": "12.00",
-     "quantity": "1", "unit": "盒", "on_sale": "false", "note": ""},
+     "quantity": "1", "unit": "盒", "on_sale": "false",
+     "merchant": "永辉", "note": ""},
     {"date": "2026-06-01", "item": "鸡蛋", "unit_price": "13.00",
-     "quantity": "2", "unit": "盒", "on_sale": "false", "note": ""},
+     "quantity": "2", "unit": "盒", "on_sale": "false",
+     "merchant": "", "note": ""},
 ]
 
 
@@ -91,3 +96,21 @@ def test_build_data_skips_bad_rows(monkeypatch, capsys):
     assert data["summary"]["total_records"] == 5  # 坏行被跳过
     err = capsys.readouterr().err
     assert "warning" in err
+
+
+def test_build_data_includes_merchant(monkeypatch):
+    import tools.build_site as bs
+    monkeypatch.setattr(bs, "_today", lambda: date(2026, 6, 15))
+    data = build_data(SAMPLE_ROWS)
+    first = data["records"][0]
+    assert first["merchant"] == "永辉"
+
+
+def test_parse_row_tolerates_missing_merchant_column():
+    # 旧 CSV 没有 merchant 列时，应容错为空字符串而非报错
+    from tools.build_site import _parse_row
+    row = {"date": "2026-06-15", "item": "白菜", "unit_price": "3.0",
+           "quantity": "1", "unit": "斤", "on_sale": "false", "note": ""}
+    rec = _parse_row(row)
+    assert rec is not None
+    assert rec["merchant"] == ""

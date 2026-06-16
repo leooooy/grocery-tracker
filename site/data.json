@@ -1,15 +1,86 @@
 {
-  "generated_at": "2026-06-16T09:31:43+08:00",
-  "records": [],
+  "generated_at": "2026-06-16T10:00:22+08:00",
+  "records": [
+    {
+      "date": "2026-06-13",
+      "item": "猪肉",
+      "unit_price": 15.0,
+      "quantity": 0.18,
+      "unit": "斤",
+      "on_sale": false,
+      "merchant": "",
+      "note": "",
+      "total": 2.7
+    },
+    {
+      "date": "2026-06-13",
+      "item": "辣椒",
+      "unit_price": 9.8,
+      "quantity": 0.272,
+      "unit": "斤",
+      "on_sale": false,
+      "merchant": "",
+      "note": "",
+      "total": 2.67
+    },
+    {
+      "date": "2026-06-13",
+      "item": "糯米丝瓜",
+      "unit_price": 6.8,
+      "quantity": 1.016,
+      "unit": "斤",
+      "on_sale": false,
+      "merchant": "",
+      "note": "2根",
+      "total": 6.91
+    }
+  ],
   "summary": {
-    "total_records": 0,
-    "total_spend": 0,
-    "month_to_date_spend": 0,
+    "total_records": 3,
+    "total_spend": 12.28,
+    "month_to_date_spend": 12.28,
     "date_range": [
-      null,
-      null
+      "2026-06-13",
+      "2026-06-13"
     ]
   },
-  "by_item": [],
-  "by_month": []
+  "by_item": [
+    {
+      "item": "糯米丝瓜",
+      "unit": "斤",
+      "count": 1,
+      "total_spend": 6.91,
+      "avg_price": 6.8,
+      "min_price": 6.8,
+      "max_price": 6.8,
+      "last_date": "2026-06-13"
+    },
+    {
+      "item": "猪肉",
+      "unit": "斤",
+      "count": 1,
+      "total_spend": 2.7,
+      "avg_price": 15.0,
+      "min_price": 15.0,
+      "max_price": 15.0,
+      "last_date": "2026-06-13"
+    },
+    {
+      "item": "辣椒",
+      "unit": "斤",
+      "count": 1,
+      "total_spend": 2.67,
+      "avg_price": 9.8,
+      "min_price": 9.8,
+      "max_price": 9.8,
+      "last_date": "2026-06-13"
+    }
+  ],
+  "by_month": [
+    {
+      "month": "2026-06",
+      "total_spend": 12.28,
+      "record_count": 3
+    }
+  ]
 }

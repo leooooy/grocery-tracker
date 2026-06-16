@@ -8,8 +8,8 @@
 
 ```bash
 python tools/add.py 白菜 3.5 -q 2 -u 斤
-python tools/add.py 鸡蛋 12.8 -q 1 -u 盒 --sale -n "30枚装"
-python tools/add.py 猪肉 28 -q 1.5 -u 斤 -d 2026-06-14
+python tools/add.py 鸡蛋 12.8 -q 1 -u 盒 -m 永辉 --sale -n "30枚装"
+python tools/add.py 猪肉 28 -q 1.5 -u 斤 -d 2026-06-14 -m 钱大妈
 ```
 
 ### 录入（交互式）
@@ -64,6 +64,7 @@ push 后 GitHub Action 会自动构建 `site/data.json` 并部署到 GitHub Page
 | `quantity` | 数量，正数 |
 | `unit` | 单位（斤/kg/盒…） |
 | `on_sale` | `true` / `false` |
+| `merchant` | 商家，可空（如 永辉/钱大妈/菜市场） |
 | `note` | 备注，可空；含逗号需 CSV 引号包裹（CLI 自动处理） |
 
 总价不存储，由 `unit_price * quantity` 计算。**不做跨单位自动换算**，

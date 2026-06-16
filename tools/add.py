@@ -10,7 +10,8 @@ from dataclasses import dataclass
 from datetime import date as date_cls
 from pathlib import Path
 
-CSV_HEADER = ["date", "item", "unit_price", "quantity", "unit", "on_sale", "note"]
+CSV_HEADER = ["date", "item", "unit_price", "quantity", "unit", "on_sale",
+              "merchant", "note"]
 
 DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 
@@ -23,6 +24,7 @@ class Record:
     quantity: float
     unit: str
     on_sale: bool
+    merchant: str
     note: str
 
     def to_row(self) -> list[str]:
@@ -33,6 +35,7 @@ class Record:
             str(self.quantity),
             self.unit,
             "true" if self.on_sale else "false",
+            self.merchant,
             self.note,
         ]
 
@@ -50,6 +53,7 @@ def validate_record(
     unit: str,
     on_sale: bool,
     note: str,
+    merchant: str = "",
 ) -> Record:
     """校验并返回规范化后的 Record。任何非法字段抛 ValidationError。"""
     if not DATE_RE.match(date):
@@ -71,6 +75,7 @@ def validate_record(
         quantity=float(quantity),
         unit=unit,
         on_sale=bool(on_sale),
+        merchant=merchant.strip(),
         note=note.strip(),
     )
 
@@ -97,6 +102,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("-d", "--date", help="日期 YYYY-MM-DD（默认今天）")
     parser.add_argument("--sale", dest="on_sale", action="store_true",
                         help="标记为打折商品")
+    parser.add_argument("-m", "--merchant", default="", help="商家（可空）")
     parser.add_argument("-n", "--note", default="", help="备注")
     parser.add_argument(
         "--csv", default="data/prices.csv",
@@ -123,6 +129,7 @@ def main() -> int:
                 quantity=ns.quantity,
                 unit=ns.unit,
                 on_sale=ns.on_sale,
+                merchant=ns.merchant,
                 note=ns.note,
             )
         except ValidationError as e:
@@ -208,12 +215,13 @@ def interactive_loop(csv_path: Path) -> int:
             price = _ask_float(f"单价 (元/{unit})")
             qty = _ask_float("数量")
             on_sale = _ask_yes_no("打折？", default=False)
+            merchant = _ask("商家", default="")
             note = _ask("备注", default="")
 
             try:
                 rec = validate_record(
                     date=d, item=item, unit_price=price, quantity=qty,
-                    unit=unit, on_sale=on_sale, note=note,
+                    unit=unit, on_sale=on_sale, merchant=merchant, note=note,
                 )
             except ValidationError as e:
                 print(f"  ✗ 校验失败：{e}，本条已丢弃")

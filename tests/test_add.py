@@ -14,14 +14,15 @@ def test_append_creates_file_with_header(tmp_csv: Path):
         quantity=2.0,
         unit="斤",
         on_sale=False,
+        merchant="",
         note="",
     )
     append_record(tmp_csv, rec)
 
     content = tmp_csv.read_text(encoding="utf-8")
     lines = content.splitlines()
-    assert lines[0] == "date,item,unit_price,quantity,unit,on_sale,note"
-    assert lines[1] == "2026-06-15,白菜,3.50,2.0,斤,false,"
+    assert lines[0] == "date,item,unit_price,quantity,unit,on_sale,merchant,note"
+    assert lines[1] == "2026-06-15,白菜,3.50,2.0,斤,false,,"
 
 
 def test_append_to_existing_does_not_rewrite_header(tmp_csv_with_header: Path):
@@ -32,13 +33,14 @@ def test_append_to_existing_does_not_rewrite_header(tmp_csv_with_header: Path):
         quantity=1.0,
         unit="盒",
         on_sale=True,
+        merchant="钱大妈",
         note="30枚装",
     )
     append_record(tmp_csv_with_header, rec)
 
     lines = tmp_csv_with_header.read_text(encoding="utf-8").splitlines()
     assert len(lines) == 2
-    assert lines[1] == "2026-06-15,鸡蛋,12.80,1.0,盒,true,30枚装"
+    assert lines[1] == "2026-06-15,鸡蛋,12.80,1.0,盒,true,钱大妈,30枚装"
 
 
 def test_note_with_comma_is_quoted(tmp_csv: Path):
@@ -49,12 +51,13 @@ def test_note_with_comma_is_quoted(tmp_csv: Path):
         quantity=1.0,
         unit="斤",
         on_sale=False,
+        merchant="",
         note="本地,有机",
     )
     append_record(tmp_csv, rec)
 
     lines = tmp_csv.read_text(encoding="utf-8").splitlines()
-    assert lines[1] == '2026-06-15,番茄,5.00,1.0,斤,false,"本地,有机"'
+    assert lines[1] == '2026-06-15,番茄,5.00,1.0,斤,false,,"本地,有机"'
 
 
 from tools.add import ValidationError, validate_record
@@ -86,10 +89,19 @@ def test_validate_rejects_non_positive_quantity():
 
 def test_validate_trims_whitespace_and_returns_record():
     rec = validate_record(date="2026-06-15", item="  白菜  ", unit_price=3.5,
-                          quantity=2.0, unit=" 斤 ", on_sale=False, note="  ")
+                          quantity=2.0, unit=" 斤 ", on_sale=False,
+                          merchant=" 永辉 ", note="  ")
     assert rec.item == "白菜"
     assert rec.unit == "斤"
+    assert rec.merchant == "永辉"
     assert rec.note == ""
+
+
+def test_validate_accepts_empty_merchant():
+    rec = validate_record(date="2026-06-15", item="白菜", unit_price=3.5,
+                          quantity=2.0, unit="斤", on_sale=False,
+                          merchant="  ", note="")
+    assert rec.merchant == ""
 
 
 from tools.add import parse_args
@@ -103,16 +115,18 @@ def test_parse_args_oneliner_minimal():
     assert ns.unit == "斤"
     assert ns.on_sale is False
     assert ns.note == ""
+    assert ns.merchant == ""
     assert ns.date is None  # None 表示由 main() 用今天
 
 
 def test_parse_args_oneliner_full():
     ns = parse_args([
         "鸡蛋", "12.8", "-q", "1", "-u", "盒",
-        "--sale", "-n", "30枚装", "-d", "2026-06-14",
+        "--sale", "-n", "30枚装", "-d", "2026-06-14", "-m", "永辉",
     ])
     assert ns.on_sale is True
     assert ns.note == "30枚装"
+    assert ns.merchant == "永辉"
     assert ns.date == "2026-06-14"
 
 
@@ -127,7 +141,21 @@ def test_main_oneliner_writes_record(tmp_path, monkeypatch):
     rc = main()
     assert rc == 0
     lines = csv_path.read_text(encoding="utf-8").splitlines()
-    assert lines[1] == "2026-06-15,白菜,3.50,2.0,斤,false,"
+    assert lines[1] == "2026-06-15,白菜,3.50,2.0,斤,false,,"
+
+
+def test_main_oneliner_with_merchant(tmp_path, monkeypatch):
+    csv_path = tmp_path / "prices.csv"
+    monkeypatch.setattr(sys, "argv", [
+        "add.py", "白菜", "3.5",
+        "-q", "2", "-u", "斤", "-d", "2026-06-15", "-m", "永辉",
+        "--csv", str(csv_path),
+    ])
+    from tools.add import main
+    rc = main()
+    assert rc == 0
+    lines = csv_path.read_text(encoding="utf-8").splitlines()
+    assert lines[1] == "2026-06-15,白菜,3.50,2.0,斤,false,永辉,"
 
 
 from tools.add import top_units

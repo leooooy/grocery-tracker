@@ -50,8 +50,9 @@ python tools/build_site.py
 - `tools/add.py`：业务函数（`Record`、`validate_record`、`append_record`、`top_units`、`parse_args`）与 CLI 入口 `main()`/`interactive_loop()` 分离。测试只覆盖纯函数，交互流程靠手工冒烟。
 - `tools/build_site.py`：`build_data(rows) -> dict` 是纯函数（聚合逻辑全在这里，便于单测）；文件 I/O 只在 `main()` 里。`_today()` 单独封装，便于测试用 monkeypatch 锁定"今天"。
 
-**`data/prices.csv` 格式**（固定列序，UTF-8）：`date,item,unit_price,quantity,unit,on_sale,note`
-- `date` 为 `YYYY-MM-DD`；`on_sale` 为全小写 `true`/`false`；`note` 含逗号时由 `csv` 模块自动加引号。
+**`data/prices.csv` 格式**（固定列序，UTF-8）：`date,item,unit_price,quantity,unit,on_sale,merchant,note`
+- `date` 为 `YYYY-MM-DD`；`on_sale` 为全小写 `true`/`false`；`merchant`（商家）可空；`note` 含逗号时由 `csv` 模块自动加引号。
+- `build_site.py` 的 `_parse_row` 用 `row.get("merchant", "")` 容错，可读取无此列的旧 CSV。
 - `total = unit_price * quantity` 是派生字段，**不存储**，在 `build_site.py` 里算。
 
 **核心设计决策（改代码前务必遵守）**：
