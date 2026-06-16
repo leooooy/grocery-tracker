@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-16T10:05:26+08:00",
+  "generated_at": "2026-06-16T10:26:16+08:00",
   "records": [
     {
       "date": "2026-06-13",
@@ -33,15 +33,48 @@
       "merchant": "勾庄蔬果直销",
       "note": "2根",
       "total": 6.91
+    },
+    {
+      "date": "2026-06-14",
+      "item": "猪肉",
+      "unit_price": 14.0,
+      "quantity": 0.256,
+      "unit": "斤",
+      "on_sale": false,
+      "merchant": "德清农家菜",
+      "note": "",
+      "total": 3.58
+    },
+    {
+      "date": "2026-06-14",
+      "item": "老豆腐",
+      "unit_price": 4.5,
+      "quantity": 0.582,
+      "unit": "斤",
+      "on_sale": false,
+      "merchant": "德清农家菜",
+      "note": "",
+      "total": 2.62
+    },
+    {
+      "date": "2026-06-14",
+      "item": "四季豆",
+      "unit_price": 8.8,
+      "quantity": 0.32,
+      "unit": "斤",
+      "on_sale": false,
+      "merchant": "德清农家菜",
+      "note": "",
+      "total": 2.82
     }
   ],
   "summary": {
-    "total_records": 3,
-    "total_spend": 12.28,
-    "month_to_date_spend": 12.28,
+    "total_records": 6,
+    "total_spend": 21.3,
+    "month_to_date_spend": 21.3,
     "date_range": [
       "2026-06-13",
-      "2026-06-13"
+      "2026-06-14"
     ]
   },
   "by_item": [
@@ -58,12 +91,22 @@
     {
       "item": "猪肉",
       "unit": "斤",
-      "count": 1,
-      "total_spend": 2.7,
-      "avg_price": 15.0,
-      "min_price": 15.0,
+      "count": 2,
+      "total_spend": 6.28,
+      "avg_price": 14.5,
+      "min_price": 14.0,
       "max_price": 15.0,
-      "last_date": "2026-06-13"
+      "last_date": "2026-06-14"
+    },
+    {
+      "item": "四季豆",
+      "unit": "斤",
+      "count": 1,
+      "total_spend": 2.82,
+      "avg_price": 8.8,
+      "min_price": 8.8,
+      "max_price": 8.8,
+      "last_date": "2026-06-14"
     },
     {
       "item": "辣椒",
@@ -74,13 +117,23 @@
       "min_price": 9.8,
       "max_price": 9.8,
       "last_date": "2026-06-13"
+    },
+    {
+      "item": "老豆腐",
+      "unit": "斤",
+      "count": 1,
+      "total_spend": 2.62,
+      "avg_price": 4.5,
+      "min_price": 4.5,
+      "max_price": 4.5,
+      "last_date": "2026-06-14"
     }
   ],
   "by_month": [
     {
       "month": "2026-06",
-      "total_spend": 12.28,
-      "record_count": 3
+      "total_spend": 21.3,
+      "record_count": 6
     }
   ]
 }
