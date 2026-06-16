@@ -188,7 +188,7 @@ def _ask_yes_no(prompt: str, default: bool = False) -> bool:
 
 def interactive_loop(csv_path: Path) -> int:
     print(f"交互式录入（CSV: {csv_path}），Ctrl+C 退出。")
-    # 本次会话记忆：日期与商家默认沿用第一条输入的值
+    # 本次会话记忆：日期与商家默认沿用上一条输入的值
     session_date: str | None = None
     session_merchant: str | None = None
     while True:
@@ -196,8 +196,7 @@ def interactive_loop(csv_path: Path) -> int:
             else date_cls.today().isoformat()
         try:
             d = _ask("日期", default=default_date)
-            if session_date is None:
-                session_date = d
+            session_date = d
             item = _ask("品名")
             while not item.strip():
                 print("  品名不能为空")
@@ -224,8 +223,7 @@ def interactive_loop(csv_path: Path) -> int:
             default_merchant = session_merchant if session_merchant is not None \
                 else ""
             merchant = _ask("商家", default=default_merchant)
-            if session_merchant is None:
-                session_merchant = merchant
+            session_merchant = merchant
             note = _ask("备注", default="")
 
             try:
