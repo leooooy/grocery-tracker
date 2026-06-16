@@ -104,6 +104,46 @@ def test_validate_accepts_empty_merchant():
     assert rec.merchant == ""
 
 
+from tools.add import convert_kg_to_jin
+
+
+def test_convert_kg_variants_to_jin():
+    for u in ["kg", "KG", "Kg", "千克", "公斤", " kg "]:
+        unit, price, qty = convert_kg_to_jin(u, 10.0, 1.0)
+        assert unit == "斤"
+        assert price == 5.0     # 单价 ÷ 2
+        assert qty == 2.0       # 数量 × 2
+        assert price * qty == 10.0  # 花费守恒
+
+
+def test_convert_non_kg_unit_unchanged():
+    assert convert_kg_to_jin("斤", 3.5, 2.0) == ("斤", 3.5, 2.0)
+    assert convert_kg_to_jin("个", 1.0, 5.0) == ("个", 1.0, 5.0)
+
+
+def test_validate_record_converts_kg():
+    rec = validate_record(date="2026-06-15", item="苹果", unit_price=10.0,
+                          quantity=1.0, unit="kg", on_sale=False, note="")
+    assert rec.unit == "斤"
+    assert rec.unit_price == 5.0
+    assert rec.quantity == 2.0
+    assert rec.unit_price * rec.quantity == 10.0
+
+
+def test_main_oneliner_kg_writes_jin(tmp_path, monkeypatch):
+    csv_path = tmp_path / "prices.csv"
+    monkeypatch.setattr(sys, "argv", [
+        "add.py", "苹果", "10",
+        "-q", "1", "-u", "kg", "-d", "2026-06-15",
+        "--csv", str(csv_path),
+    ])
+    from tools.add import main
+    rc = main()
+    assert rc == 0
+    lines = csv_path.read_text(encoding="utf-8").splitlines()
+    assert lines[1] == "2026-06-15,苹果,5.00,2.0,斤,false,,"
+
+
 from tools.add import parse_args
 
 

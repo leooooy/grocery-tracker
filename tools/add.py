@@ -15,6 +15,32 @@ CSV_HEADER = ["date", "item", "unit_price", "quantity", "unit", "on_sale",
 
 DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 
+# 录入时把千克类单位换算成斤：1 kg = 2 斤（数量×2、单价÷2，花费守恒）
+KG_UNITS = {"kg", "千克", "公斤"}
+KG_TO_JIN = 2
+JIN = "斤"
+
+
+def _is_kg_unit(unit: str) -> bool:
+    return unit.strip().lower() in KG_UNITS
+
+
+def convert_kg_to_jin(
+    unit: str, unit_price: float, quantity: float,
+) -> tuple[str, float, float]:
+    """单位为 kg 类则换算成斤（数量×2、单价÷2），否则原样返回。"""
+    if _is_kg_unit(unit):
+        return JIN, unit_price / KG_TO_JIN, quantity * KG_TO_JIN
+    return unit, unit_price, quantity
+
+
+def _conversion_note(orig_unit: str, orig_price: float, orig_qty: float) -> str:
+    """若原单位是 kg 类，返回换算说明后缀，否则空串。"""
+    if _is_kg_unit(orig_unit):
+        return (f"（由 {orig_price:.2f}/{orig_unit.strip()} "
+                f"× {float(orig_qty)} 换算）")
+    return ""
+
 
 @dataclass
 class Record:
@@ -68,6 +94,9 @@ def validate_record(
     unit = unit.strip()
     if not unit:
         raise ValidationError("单位不能为空")
+    unit, unit_price, quantity = convert_kg_to_jin(
+        unit, float(unit_price), float(quantity),
+    )
     return Record(
         date=date,
         item=item,
@@ -136,8 +165,9 @@ def main() -> int:
             print(f"错误：{e}", flush=True)
             return 1
         append_record(csv_path, rec)
+        note_suffix = _conversion_note(ns.unit, ns.unit_price, ns.quantity)
         print(f"✓ 已写入 {csv_path}：{rec.item} {rec.unit_price:.2f} "
-              f"x {rec.quantity} {rec.unit}")
+              f"x {rec.quantity} {rec.unit}{note_suffix}")
         return 0
 
     return interactive_loop(csv_path)
@@ -235,8 +265,9 @@ def interactive_loop(csv_path: Path) -> int:
                 print(f"  ✗ 校验失败：{e}，本条已丢弃")
             else:
                 append_record(csv_path, rec)
+                note_suffix = _conversion_note(unit, price, qty)
                 print(f"  ✓ 已写入：{rec.item} {rec.unit_price:.2f} "
-                      f"x {rec.quantity} {rec.unit}")
+                      f"x {rec.quantity} {rec.unit}{note_suffix}")
         except (KeyboardInterrupt, EOFError):
             print("\n退出")
             return 0

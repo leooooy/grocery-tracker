@@ -58,7 +58,7 @@ python tools/build_site.py
 **核心设计决策（改代码前务必遵守）**：
 - **CLI 只追加，不重排序、不去重、不修改/删除**。同一天买两次同一品名是合法的。改老数据让用户直接编辑 CSV（便于 `git diff` 审查）。
 - **不自动 `git commit`/`push`**——由用户手动控制。
-- **不做跨单位换算**：聚合按 `(item, unit)` 联合分组，"斤" 和 "kg" 视为两个独立分组，避免不同单位均价被错误平均。
+- **单位换算仅 kg→斤、且仅录入时**：`add.py` 的 `convert_kg_to_jin` 在 `validate_record` 内把 `kg/千克/公斤` 换成「斤」（数量×2、单价÷2，花费守恒），CSV 只存斤。其余单位不换算。`build_site.py` 不做换算，聚合仍按 `(item, unit)` 联合分组，避免不同单位均价被错误平均。手动写进 CSV 的 kg 行不会被换算。
 - **品名不规范化**：`by_item` 严格按字面分组（"白菜" 与 "大白菜" 是两项）。
 - 坏数据在两处拦截：`add.py` 写入前用 `validate_record` 校验（拒绝脏数据进 repo）；`build_site.py` 读取时对坏行打 warning 到 stderr 并跳过（不中断），空 CSV 产出有效的空骨架 JSON。
 
