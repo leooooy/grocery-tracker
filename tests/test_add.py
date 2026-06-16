@@ -128,3 +128,25 @@ def test_main_oneliner_writes_record(tmp_path, monkeypatch):
     assert rc == 0
     lines = csv_path.read_text(encoding="utf-8").splitlines()
     assert lines[1] == "2026-06-15,白菜,3.50,2.0,斤,false,"
+
+
+from tools.add import top_units
+
+
+def test_top_units_returns_top_n_by_frequency(tmp_csv_with_header: Path):
+    tmp_csv_with_header.write_text(
+        "date,item,unit_price,quantity,unit,on_sale,note\n"
+        "2026-06-01,白菜,3.0,1,斤,false,\n"
+        "2026-06-02,白菜,3.0,1,斤,false,\n"
+        "2026-06-03,鸡蛋,12.0,1,盒,false,\n"
+        "2026-06-04,苹果,5.0,1,kg,false,\n"
+        "2026-06-05,苹果,5.0,1,kg,false,\n"
+        "2026-06-06,苹果,5.0,1,kg,false,\n",
+        encoding="utf-8",
+    )
+    units = top_units(tmp_csv_with_header, n=3)
+    assert units == [("kg", 3), ("斤", 2), ("盒", 1)]
+
+
+def test_top_units_on_missing_file_returns_empty(tmp_path):
+    assert top_units(tmp_path / "missing.csv") == []

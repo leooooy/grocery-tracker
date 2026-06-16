@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import csv
 import re
+from collections import Counter
 from dataclasses import dataclass
 from datetime import date as date_cls
 from pathlib import Path
@@ -135,11 +136,97 @@ def main() -> int:
     return interactive_loop(csv_path)
 
 
+def top_units(csv_path: Path, n: int = 3) -> list[tuple[str, int]]:
+    """按出现次数返回前 n 个单位。"""
+    if not csv_path.exists():
+        return []
+    counter: Counter[str] = Counter()
+    with csv_path.open("r", encoding="utf-8", newline="") as f:
+        reader = csv.DictReader(f)
+        for row in reader:
+            u = (row.get("unit") or "").strip()
+            if u:
+                counter[u] += 1
+    return counter.most_common(n)
+
+
+def _ask(prompt: str, default: str | None = None) -> str:
+    suffix = f" [{default}]" if default is not None else ""
+    raw = input(f"{prompt}{suffix}: ").strip()
+    if not raw and default is not None:
+        return default
+    return raw
+
+
+def _ask_float(prompt: str) -> float:
+    while True:
+        raw = input(f"{prompt}: ").strip()
+        try:
+            v = float(raw)
+            if v <= 0:
+                print("  必须为正数，请重输")
+                continue
+            return v
+        except ValueError:
+            print("  不是有效数字，请重输")
+
+
+def _ask_yes_no(prompt: str, default: bool = False) -> bool:
+    suffix = "[y/N]" if not default else "[Y/n]"
+    raw = input(f"{prompt} {suffix}: ").strip().lower()
+    if not raw:
+        return default
+    return raw in ("y", "yes")
+
+
 def interactive_loop(csv_path: Path) -> int:
-    """交互模式的占位 —— Task 4 实现。"""
-    print("交互模式尚未实现（Task 4）。请使用一行式参数，例如：")
-    print("  python tools/add.py 白菜 3.5 -q 2 -u 斤")
-    return 2
+    print(f"交互式录入（CSV: {csv_path}），Ctrl+C 退出。")
+    while True:
+        today = date_cls.today().isoformat()
+        try:
+            d = _ask("日期", default=today)
+            item = _ask("品名")
+            while not item.strip():
+                print("  品名不能为空")
+                item = _ask("品名")
+
+            units = top_units(csv_path, n=3)
+            if units:
+                hint = "  最近用过的单位：" + " ".join(
+                    f"{u}({c})" for u, c in units
+                )
+                print(hint)
+                default_unit = units[0][0]
+            else:
+                default_unit = None
+            unit = _ask("单位", default=default_unit) if default_unit \
+                else _ask("单位")
+            while not unit.strip():
+                print("  单位不能为空")
+                unit = _ask("单位")
+
+            price = _ask_float(f"单价 (元/{unit})")
+            qty = _ask_float("数量")
+            on_sale = _ask_yes_no("打折？", default=False)
+            note = _ask("备注", default="")
+
+            try:
+                rec = validate_record(
+                    date=d, item=item, unit_price=price, quantity=qty,
+                    unit=unit, on_sale=on_sale, note=note,
+                )
+            except ValidationError as e:
+                print(f"  ✗ 校验失败：{e}，本条已丢弃")
+            else:
+                append_record(csv_path, rec)
+                print(f"  ✓ 已写入：{rec.item} {rec.unit_price:.2f} "
+                      f"x {rec.quantity} {rec.unit}")
+        except (KeyboardInterrupt, EOFError):
+            print("\n退出")
+            return 0
+
+        if not _ask_yes_no("继续录入？", default=True):
+            return 0
 
 
 if __name__ == "__main__":
