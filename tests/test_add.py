@@ -1,3 +1,4 @@
+import sys
 from pathlib import Path
 
 import pytest
@@ -89,3 +90,41 @@ def test_validate_trims_whitespace_and_returns_record():
     assert rec.item == "白菜"
     assert rec.unit == "斤"
     assert rec.note == ""
+
+
+from tools.add import parse_args
+
+
+def test_parse_args_oneliner_minimal():
+    ns = parse_args(["白菜", "3.5", "-q", "2", "-u", "斤"])
+    assert ns.item == "白菜"
+    assert ns.unit_price == 3.5
+    assert ns.quantity == 2.0
+    assert ns.unit == "斤"
+    assert ns.on_sale is False
+    assert ns.note == ""
+    assert ns.date is None  # None 表示由 main() 用今天
+
+
+def test_parse_args_oneliner_full():
+    ns = parse_args([
+        "鸡蛋", "12.8", "-q", "1", "-u", "盒",
+        "--sale", "-n", "30枚装", "-d", "2026-06-14",
+    ])
+    assert ns.on_sale is True
+    assert ns.note == "30枚装"
+    assert ns.date == "2026-06-14"
+
+
+def test_main_oneliner_writes_record(tmp_path, monkeypatch):
+    csv_path = tmp_path / "prices.csv"
+    monkeypatch.setattr(sys, "argv", [
+        "add.py", "白菜", "3.5",
+        "-q", "2", "-u", "斤", "-d", "2026-06-15",
+        "--csv", str(csv_path),
+    ])
+    from tools.add import main
+    rc = main()
+    assert rc == 0
+    lines = csv_path.read_text(encoding="utf-8").splitlines()
+    assert lines[1] == "2026-06-15,白菜,3.50,2.0,斤,false,"

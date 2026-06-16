@@ -2,9 +2,11 @@
 
 from __future__ import annotations
 
+import argparse
 import csv
 import re
 from dataclasses import dataclass
+from datetime import date as date_cls
 from pathlib import Path
 
 CSV_HEADER = ["date", "item", "unit_price", "quantity", "unit", "on_sale", "note"]
@@ -81,3 +83,64 @@ def append_record(csv_path: Path, record: Record) -> None:
         if write_header:
             writer.writerow(CSV_HEADER)
         writer.writerow(record.to_row())
+
+
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
+    parser = argparse.ArgumentParser(
+        description="把一条购物记录追加到 data/prices.csv",
+    )
+    parser.add_argument("item", nargs="?", help="品名（省略则进入交互模式）")
+    parser.add_argument("unit_price", nargs="?", type=float, help="单价（元）")
+    parser.add_argument("-q", "--quantity", type=float, help="数量")
+    parser.add_argument("-u", "--unit", help="单位（斤/kg/盒…）")
+    parser.add_argument("-d", "--date", help="日期 YYYY-MM-DD（默认今天）")
+    parser.add_argument("--sale", dest="on_sale", action="store_true",
+                        help="标记为打折商品")
+    parser.add_argument("-n", "--note", default="", help="备注")
+    parser.add_argument(
+        "--csv", default="data/prices.csv",
+        help="目标 CSV 路径（默认 data/prices.csv）",
+    )
+    return parser.parse_args(argv)
+
+
+def main() -> int:
+    ns = parse_args()
+    csv_path = Path(ns.csv)
+
+    if ns.item is not None and ns.unit_price is not None:
+        if ns.quantity is None or ns.unit is None:
+            print("错误：一行式录入需要同时提供 -q/--quantity 和 -u/--unit",
+                  flush=True)
+            return 2
+        chosen_date = ns.date or date_cls.today().isoformat()
+        try:
+            rec = validate_record(
+                date=chosen_date,
+                item=ns.item,
+                unit_price=ns.unit_price,
+                quantity=ns.quantity,
+                unit=ns.unit,
+                on_sale=ns.on_sale,
+                note=ns.note,
+            )
+        except ValidationError as e:
+            print(f"错误：{e}", flush=True)
+            return 1
+        append_record(csv_path, rec)
+        print(f"✓ 已写入 {csv_path}：{rec.item} {rec.unit_price:.2f} "
+              f"x {rec.quantity} {rec.unit}")
+        return 0
+
+    return interactive_loop(csv_path)
+
+
+def interactive_loop(csv_path: Path) -> int:
+    """交互模式的占位 —— Task 4 实现。"""
+    print("交互模式尚未实现（Task 4）。请使用一行式参数，例如：")
+    print("  python tools/add.py 白菜 3.5 -q 2 -u 斤")
+    return 2
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
