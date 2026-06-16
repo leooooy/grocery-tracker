@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>Grocery Tracker</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <style>
+    :root { font-family: -apple-system, "Segoe UI", "Microsoft YaHei", sans-serif; }
+    body { margin: 0; padding: 1rem; max-width: 1100px; margin: 0 auto; color: #222; }
+    h1 { font-size: 1.4rem; margin: 0 0 1rem; }
+    h2 { font-size: 1.1rem; margin: 1.5rem 0 0.5rem; border-bottom: 1px solid #eee; padding-bottom: 0.25rem; }
+    .summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 0.75rem; }
+    .card { background: #f7f7f8; padding: 0.75rem 1rem; border-radius: 6px; }
+    .card .label { font-size: 0.8rem; color: #666; }
+    .card .value { font-size: 1.3rem; font-weight: 600; margin-top: 0.25rem; }
+    .chart-box { position: relative; height: 320px; }
+    select, input { font: inherit; padding: 0.25rem 0.5rem; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+    th, td { padding: 0.4rem 0.5rem; border-bottom: 1px solid #eee; text-align: left; }
+    th { background: #fafafa; cursor: pointer; user-select: none; }
+    .right { text-align: right; }
+    .controls { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.5rem; }
+    .muted { color: #888; }
+    #generatedAt { font-size: 0.8rem; color: #888; }
+  </style>
+</head>
+<body>
+  <h1>Grocery Tracker <span id="generatedAt" class="muted"></span></h1>
+
+  <section class="summary" id="summary"></section>
+
+  <h2>价格走势</h2>
+  <div class="controls">
+    <select id="itemSelect" multiple size="6" style="min-width: 240px"></select>
+    <span class="muted">按住 Ctrl/Cmd 多选</span>
+  </div>
+  <div class="chart-box"><canvas id="trendChart"></canvas></div>
+
+  <h2>月度花费</h2>
+  <div class="chart-box"><canvas id="monthChart"></canvas></div>
+
+  <h2>品类排行</h2>
+  <table id="byItemTable">
+    <thead>
+      <tr>
+        <th data-sort="item">品名</th>
+        <th data-sort="unit">单位</th>
+        <th data-sort="count" class="right">次数</th>
+        <th data-sort="total_spend" class="right">累计花费</th>
+        <th data-sort="avg_price" class="right">均价</th>
+        <th data-sort="min_price" class="right">最低</th>
+        <th data-sort="max_price" class="right">最高</th>
+        <th data-sort="last_date">最近</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <h2>原始记录</h2>
+  <div class="controls">
+    <input id="filterText" type="search" placeholder="按品名/备注过滤…" />
+    <span id="recordCount" class="muted"></span>
+  </div>
+  <table id="recordsTable">
+    <thead>
+      <tr>
+        <th>日期</th><th>品名</th><th class="right">单价</th>
+        <th class="right">数量</th><th>单位</th><th>打折</th><th>备注</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script src="./app.js"></script>
+</body>
+</html>
