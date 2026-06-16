@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-16T10:00:22+08:00",
+  "generated_at": "2026-06-16T10:05:26+08:00",
   "records": [
     {
       "date": "2026-06-13",
@@ -8,7 +8,7 @@
       "quantity": 0.18,
       "unit": "斤",
       "on_sale": false,
-      "merchant": "",
+      "merchant": "勾庄蔬果直销",
       "note": "",
       "total": 2.7
     },
@@ -19,7 +19,7 @@
       "quantity": 0.272,
       "unit": "斤",
       "on_sale": false,
-      "merchant": "",
+      "merchant": "勾庄蔬果直销",
       "note": "",
       "total": 2.67
     },
@@ -30,7 +30,7 @@
       "quantity": 1.016,
       "unit": "斤",
       "on_sale": false,
-      "merchant": "",
+      "merchant": "勾庄蔬果直销",
       "note": "2根",
       "total": 6.91
     }
