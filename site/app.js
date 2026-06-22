@@ -81,14 +81,17 @@ function renderTrendChart() {
     };
   });
 
+  // category 轴需要 labels 才能给数据点定位：取所有选中系列日期的并集并排序。
+  const labels = [...new Set(datasets.flatMap(ds => ds.data.map(p => p.x)))]
+    .sort();
+
   if (trendChart) trendChart.destroy();
   trendChart = new Chart(ctx, {
     type: "line",
-    data: { datasets },
+    data: { labels, datasets },
     options: {
       responsive: true,
       maintainAspectRatio: false,
-      parsing: false,
       scales: {
         x: { type: "category", title: { display: true, text: "日期" } },
         y: { title: { display: true, text: "单价（元）" }, beginAtZero: true },
