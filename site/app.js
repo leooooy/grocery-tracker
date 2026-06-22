@@ -168,8 +168,9 @@ function renderRecords() {
       <td>${r.date}</td>
       <td>${escapeHtml(r.item)}</td>
       <td class="right">¥ ${r.unit_price.toFixed(2)}</td>
-      <td class="right">${r.quantity}</td>
       <td>${escapeHtml(r.unit)}</td>
+      <td class="right">${r.quantity}</td>
+      <td class="right">¥ ${r.total.toFixed(2)}</td>
       <td>${r.on_sale ? "✓" : ""}</td>
       <td>${escapeHtml(r.merchant || "")}</td>
       <td>${escapeHtml(r.note || "")}</td>
