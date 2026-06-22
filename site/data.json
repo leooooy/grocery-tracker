@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-22T10:27:08+08:00",
+  "generated_at": "2026-06-22T10:59:38+08:00",
   "records": [
     {
       "date": "2026-06-13",
@@ -75,7 +75,7 @@
       "unit": "斤",
       "on_sale": false,
       "merchant": "勾庄蔬果直销",
-      "note": "",
+      "note": "3个",
       "total": 5.28
     },
     {
@@ -157,7 +157,7 @@
     },
     {
       "date": "2026-06-20",
-      "item": "猪肉",
+      "item": "茄子",
       "unit_price": 6.0,
       "quantity": 0.524,
       "unit": "斤",
@@ -191,10 +191,10 @@
     {
       "item": "猪肉",
       "unit": "斤",
-      "count": 5,
-      "total_spend": 15.94,
-      "avg_price": 11.3,
-      "min_price": 6.0,
+      "count": 4,
+      "total_spend": 12.8,
+      "avg_price": 12.62,
+      "min_price": 10.0,
       "max_price": 15.0,
       "last_date": "2026-06-21"
     },
@@ -247,6 +247,16 @@
       "min_price": 5.0,
       "max_price": 5.0,
       "last_date": "2026-06-19"
+    },
+    {
+      "item": "茄子",
+      "unit": "斤",
+      "count": 1,
+      "total_spend": 3.14,
+      "avg_price": 6.0,
+      "min_price": 6.0,
+      "max_price": 6.0,
+      "last_date": "2026-06-20"
     },
     {
       "item": "红苋菜",
