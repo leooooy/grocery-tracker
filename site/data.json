@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-16T10:26:16+08:00",
+  "generated_at": "2026-06-22T10:27:08+08:00",
   "records": [
     {
       "date": "2026-06-13",
@@ -66,18 +66,158 @@
       "merchant": "德清农家菜",
       "note": "",
       "total": 2.82
+    },
+    {
+      "date": "2026-06-19",
+      "item": "鸡蛋",
+      "unit_price": 15.0,
+      "quantity": 0.352,
+      "unit": "斤",
+      "on_sale": false,
+      "merchant": "勾庄蔬果直销",
+      "note": "",
+      "total": 5.28
+    },
+    {
+      "date": "2026-06-19",
+      "item": "四季豆",
+      "unit_price": 9.8,
+      "quantity": 0.568,
+      "unit": "斤",
+      "on_sale": false,
+      "merchant": "勾庄蔬果直销",
+      "note": "",
+      "total": 5.57
+    },
+    {
+      "date": "2026-06-19",
+      "item": "猪肉",
+      "unit_price": 11.5,
+      "quantity": 0.372,
+      "unit": "斤",
+      "on_sale": false,
+      "merchant": "勾庄蔬果直销",
+      "note": "",
+      "total": 4.28
+    },
+    {
+      "date": "2026-06-19",
+      "item": "丝瓜",
+      "unit_price": 5.0,
+      "quantity": 1.0,
+      "unit": "斤",
+      "on_sale": true,
+      "merchant": "勾庄蔬果直销",
+      "note": "5元4个",
+      "total": 5.0
+    },
+    {
+      "date": "2026-06-19",
+      "item": "黑蜜西瓜",
+      "unit_price": 0.99,
+      "quantity": 3.758,
+      "unit": "斤",
+      "on_sale": true,
+      "merchant": "果果卖场",
+      "note": "原价2.58",
+      "total": 3.72
+    },
+    {
+      "date": "2026-06-20",
+      "item": "黑蜜西瓜",
+      "unit_price": 0.99,
+      "quantity": 4.152,
+      "unit": "斤",
+      "on_sale": true,
+      "merchant": "果果卖场",
+      "note": "原价2.58",
+      "total": 4.11
+    },
+    {
+      "date": "2026-06-20",
+      "item": "大蒜",
+      "unit_price": 5.9,
+      "quantity": 0.128,
+      "unit": "斤",
+      "on_sale": false,
+      "merchant": "德清农家菜",
+      "note": "1个",
+      "total": 0.76
+    },
+    {
+      "date": "2026-06-20",
+      "item": "红苋菜",
+      "unit_price": 3.0,
+      "quantity": 1.0,
+      "unit": "斤",
+      "on_sale": true,
+      "merchant": "德清农家菜",
+      "note": "一捆3元",
+      "total": 3.0
+    },
+    {
+      "date": "2026-06-20",
+      "item": "猪肉",
+      "unit_price": 6.0,
+      "quantity": 0.524,
+      "unit": "斤",
+      "on_sale": false,
+      "merchant": "德清农家菜",
+      "note": "",
+      "total": 3.14
+    },
+    {
+      "date": "2026-06-21",
+      "item": "猪肉",
+      "unit_price": 10.0,
+      "quantity": 0.224,
+      "unit": "斤",
+      "on_sale": false,
+      "merchant": "勾庄蔬果直销",
+      "note": "",
+      "total": 2.24
     }
   ],
   "summary": {
-    "total_records": 6,
-    "total_spend": 21.3,
-    "month_to_date_spend": 21.3,
+    "total_records": 16,
+    "total_spend": 58.4,
+    "month_to_date_spend": 58.4,
     "date_range": [
       "2026-06-13",
-      "2026-06-14"
+      "2026-06-21"
     ]
   },
   "by_item": [
+    {
+      "item": "猪肉",
+      "unit": "斤",
+      "count": 5,
+      "total_spend": 15.94,
+      "avg_price": 11.3,
+      "min_price": 6.0,
+      "max_price": 15.0,
+      "last_date": "2026-06-21"
+    },
+    {
+      "item": "四季豆",
+      "unit": "斤",
+      "count": 2,
+      "total_spend": 8.39,
+      "avg_price": 9.3,
+      "min_price": 8.8,
+      "max_price": 9.8,
+      "last_date": "2026-06-19"
+    },
+    {
+      "item": "黑蜜西瓜",
+      "unit": "斤",
+      "count": 2,
+      "total_spend": 7.83,
+      "avg_price": 0.99,
+      "min_price": 0.99,
+      "max_price": 0.99,
+      "last_date": "2026-06-20"
+    },
     {
       "item": "糯米丝瓜",
       "unit": "斤",
@@ -89,24 +229,34 @@
       "last_date": "2026-06-13"
     },
     {
-      "item": "猪肉",
-      "unit": "斤",
-      "count": 2,
-      "total_spend": 6.28,
-      "avg_price": 14.5,
-      "min_price": 14.0,
-      "max_price": 15.0,
-      "last_date": "2026-06-14"
-    },
-    {
-      "item": "四季豆",
+      "item": "鸡蛋",
       "unit": "斤",
       "count": 1,
-      "total_spend": 2.82,
-      "avg_price": 8.8,
-      "min_price": 8.8,
-      "max_price": 8.8,
-      "last_date": "2026-06-14"
+      "total_spend": 5.28,
+      "avg_price": 15.0,
+      "min_price": 15.0,
+      "max_price": 15.0,
+      "last_date": "2026-06-19"
+    },
+    {
+      "item": "丝瓜",
+      "unit": "斤",
+      "count": 1,
+      "total_spend": 5.0,
+      "avg_price": 5.0,
+      "min_price": 5.0,
+      "max_price": 5.0,
+      "last_date": "2026-06-19"
+    },
+    {
+      "item": "红苋菜",
+      "unit": "斤",
+      "count": 1,
+      "total_spend": 3.0,
+      "avg_price": 3.0,
+      "min_price": 3.0,
+      "max_price": 3.0,
+      "last_date": "2026-06-20"
     },
     {
       "item": "辣椒",
@@ -127,13 +277,23 @@
       "min_price": 4.5,
       "max_price": 4.5,
       "last_date": "2026-06-14"
+    },
+    {
+      "item": "大蒜",
+      "unit": "斤",
+      "count": 1,
+      "total_spend": 0.76,
+      "avg_price": 5.9,
+      "min_price": 5.9,
+      "max_price": 5.9,
+      "last_date": "2026-06-20"
     }
   ],
   "by_month": [
     {
       "month": "2026-06",
-      "total_spend": 21.3,
-      "record_count": 6
+      "total_spend": 58.4,
+      "record_count": 16
     }
   ]
 }
