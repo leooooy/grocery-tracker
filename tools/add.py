@@ -13,6 +13,10 @@ from pathlib import Path
 CSV_HEADER = ["date", "item", "unit_price", "quantity", "unit", "on_sale",
               "merchant", "note"]
 
+# 默认 CSV 锚定到仓库根（本文件 tools/add.py 的上两级目录），不随运行时
+# 工作目录变化——避免在 tools/ 下启动时误写出 tools/data/prices.csv。
+DEFAULT_CSV = Path(__file__).resolve().parent.parent / "data" / "prices.csv"
+
 DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 
 # 录入时把千克类单位换算成斤：1 kg = 2 斤（数量×2、单价÷2，花费守恒）
@@ -34,10 +38,20 @@ def convert_kg_to_jin(
     return unit, unit_price, quantity
 
 
+def _format_price(value: float) -> str:
+    """格式化单价：至少 2 位小数，但保留更多位以不丢精度。
+    kg→斤 折半会出现第 3 位（如 0.064/kg → 0.032/斤），直接写 0.03 会破坏花费守恒。"""
+    s = f"{value:.6f}".rstrip("0")
+    int_part, _, frac = s.partition(".")
+    if len(frac) < 2:
+        frac = frac.ljust(2, "0")
+    return f"{int_part}.{frac}"
+
+
 def _conversion_note(orig_unit: str, orig_price: float, orig_qty: float) -> str:
     """若原单位是 kg 类，返回换算说明后缀，否则空串。"""
     if _is_kg_unit(orig_unit):
-        return (f"（由 {orig_price:.2f}/{orig_unit.strip()} "
+        return (f"（由 {_format_price(orig_price)}/{orig_unit.strip()} "
                 f"× {float(orig_qty)} 换算）")
     return ""
 
@@ -57,7 +71,7 @@ class Record:
         return [
             self.date,
             self.item,
-            f"{self.unit_price:.2f}",
+            _format_price(self.unit_price),
             str(self.quantity),
             self.unit,
             "true" if self.on_sale else "false",
@@ -134,8 +148,8 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("-m", "--merchant", default="", help="商家（可空）")
     parser.add_argument("-n", "--note", default="", help="备注")
     parser.add_argument(
-        "--csv", default="data/prices.csv",
-        help="目标 CSV 路径（默认 data/prices.csv）",
+        "--csv", default=str(DEFAULT_CSV),
+        help="目标 CSV 路径（默认仓库根 data/prices.csv）",
     )
     return parser.parse_args(argv)
 
@@ -166,7 +180,7 @@ def main() -> int:
             return 1
         append_record(csv_path, rec)
         note_suffix = _conversion_note(ns.unit, ns.unit_price, ns.quantity)
-        print(f"✓ 已写入 {csv_path}：{rec.item} {rec.unit_price:.2f} "
+        print(f"✓ 已写入 {csv_path}：{rec.item} {_format_price(rec.unit_price)} "
               f"x {rec.quantity} {rec.unit}{note_suffix}")
         return 0
 
@@ -218,8 +232,9 @@ def _ask_yes_no(prompt: str, default: bool = False) -> bool:
 
 def interactive_loop(csv_path: Path) -> int:
     print(f"交互式录入（CSV: {csv_path}），Ctrl+C 退出。")
-    # 本次会话记忆：日期与商家默认沿用上一条输入的值
+    # 本次会话记忆：日期、单位、商家默认沿用上一条输入的值
     session_date: str | None = None
+    session_unit: str | None = None
     session_merchant: str | None = None
     while True:
         default_date = session_date if session_date is not None \
@@ -238,6 +253,11 @@ def interactive_loop(csv_path: Path) -> int:
                     f"{u}({c})" for u, c in units
                 )
                 print(hint)
+            # 默认优先用本次会话上一条输入的原始单位（如 kg），
+            # 否则退回 CSV 里出现最多的单位。
+            if session_unit is not None:
+                default_unit = session_unit
+            elif units:
                 default_unit = units[0][0]
             else:
                 default_unit = None
@@ -246,6 +266,7 @@ def interactive_loop(csv_path: Path) -> int:
             while not unit.strip():
                 print("  单位不能为空")
                 unit = _ask("单位")
+            session_unit = unit
 
             price = _ask_float(f"单价 (元/{unit})")
             qty = _ask_float("数量")
@@ -266,7 +287,7 @@ def interactive_loop(csv_path: Path) -> int:
             else:
                 append_record(csv_path, rec)
                 note_suffix = _conversion_note(unit, price, qty)
-                print(f"  ✓ 已写入：{rec.item} {rec.unit_price:.2f} "
+                print(f"  ✓ 已写入：{rec.item} {_format_price(rec.unit_price)} "
                       f"x {rec.quantity} {rec.unit}{note_suffix}")
         except (KeyboardInterrupt, EOFError):
             print("\n退出")

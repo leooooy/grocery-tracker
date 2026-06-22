@@ -130,6 +130,16 @@ def test_validate_record_converts_kg():
     assert rec.unit_price * rec.quantity == 10.0
 
 
+def test_kg_conversion_keeps_extra_precision(tmp_csv: Path):
+    # 0.064/kg ÷2 → 0.032/斤，数量 11.8 ×2 → 23.6。
+    # 第 3 位小数不得被截成 0.03（否则 0.03×23.6=0.708 破坏花费守恒）。
+    rec = validate_record(date="2026-06-20", item="大蒜", unit_price=0.064,
+                          quantity=11.8, unit="kg", on_sale=False, note="")
+    append_record(tmp_csv, rec)
+    line = tmp_csv.read_text(encoding="utf-8").splitlines()[1]
+    assert line == "2026-06-20,大蒜,0.032,23.6,斤,false,,"
+
+
 def test_main_oneliner_kg_writes_jin(tmp_path, monkeypatch):
     csv_path = tmp_path / "prices.csv"
     monkeypatch.setattr(sys, "argv", [

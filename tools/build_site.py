@@ -9,6 +9,12 @@ from collections import defaultdict
 from datetime import date, datetime
 from pathlib import Path
 
+# 默认路径锚定到仓库根（本文件 tools/build_site.py 的上两级目录），不随运行时
+# 工作目录变化——与 add.py 保持一致，避免在 tools/ 下运行读/写错位置。
+_REPO_ROOT = Path(__file__).resolve().parent.parent
+DEFAULT_CSV = _REPO_ROOT / "data" / "prices.csv"
+DEFAULT_OUT = _REPO_ROOT / "site" / "data.json"
+
 
 def _today() -> date:
     """间接获取今天，便于测试 monkeypatch。"""
@@ -111,8 +117,8 @@ def build_data(rows: list[dict]) -> dict:
     }
 
 
-def main(csv_path: str = "data/prices.csv",
-         out_path: str = "site/data.json") -> int:
+def main(csv_path: str = str(DEFAULT_CSV),
+         out_path: str = str(DEFAULT_OUT)) -> int:
     src = Path(csv_path)
     dst = Path(out_path)
     rows: list[dict] = []
