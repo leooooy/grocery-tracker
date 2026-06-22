@@ -5,6 +5,29 @@ const CHART_COLORS = [
   "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf",
 ];
 
+// 内联插件：在走势图每个数据点上方标出价格，更直观。仅挂在 trendChart 上。
+const pointValueLabels = {
+  id: "pointValueLabels",
+  afterDatasetsDraw(chart) {
+    const { ctx } = chart;
+    ctx.save();
+    ctx.font = "11px sans-serif";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "bottom";
+    chart.data.datasets.forEach((ds, di) => {
+      const meta = chart.getDatasetMeta(di);
+      if (meta.hidden) return;
+      ctx.fillStyle = ds.borderColor || "#333";
+      meta.data.forEach((pt, i) => {
+        const raw = ds.data[i];
+        if (!raw) return;
+        ctx.fillText(`¥${raw.y.toFixed(2)}`, pt.x, pt.y - 6);
+      });
+    });
+    ctx.restore();
+  },
+};
+
 let DATA = null;
 let trendChart = null;
 let monthChart = null;
@@ -88,6 +111,7 @@ function renderTrendChart() {
   if (trendChart) trendChart.destroy();
   trendChart = new Chart(ctx, {
     type: "line",
+    plugins: [pointValueLabels],
     data: { labels, datasets },
     options: {
       responsive: true,
